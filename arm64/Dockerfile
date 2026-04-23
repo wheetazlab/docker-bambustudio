@@ -48,8 +48,6 @@ RUN \
     libxkbcommon-dev \
     libxrandr-dev \
     libxxf86vm-dev \
-    libwxgtk3.2-dev \
-    libwxgtk-webview3.2-dev \
     libzstd-dev \
     m4 \
     ninja-build \
@@ -98,8 +96,7 @@ RUN \
     -DDEP_BUILD_JPEG=OFF \
     -DDEP_BUILD_OPENSSL=OFF \
     -DDEP_BUILD_PNG=OFF \
-    -DDEP_BUILD_TIFF=OFF \
-    -DDEP_BUILD_WXWIDGETS=OFF && \
+    -DDEP_BUILD_TIFF=OFF && \
   cmake --build deps-build
 
 # Build and install BambuStudio
