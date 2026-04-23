@@ -77,7 +77,6 @@ WORKDIR /build/BambuStudio
 RUN \
   cp /patches/TBB/GNU.cmake deps/TBB/GNU.cmake && \
   git apply /patches/0001-ENH-Allow-using-system-Blosc.patch && \
-  git apply /patches/gmp-fixes.patch && \
   git apply /patches/0001-Apply-TBB-LTO-patch.patch
 
 # Build BambuStudio bundled dependencies
