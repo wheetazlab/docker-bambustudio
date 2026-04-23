@@ -33,7 +33,6 @@ RUN \
     libtool \
     libudev-dev \
     libwayland-dev \
-    libwayland-egl-dev \
     libwebkit2gtk-4.1-dev \
     libx11-dev \
     libxcursor-dev \
