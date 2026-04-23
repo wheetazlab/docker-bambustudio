@@ -81,12 +81,21 @@ RUN \
   git apply /patches/0001-Apply-TBB-LTO-patch.patch
 
 # Build BambuStudio bundled dependencies
+# Disable deps that are already installed from apt to avoid patch/build failures
 RUN \
   cmake -S deps -B /build/deps-build \
     -GNinja \
     -DCMAKE_BUILD_TYPE=Release \
     -DDESTDIR=/build/deps-install \
-    -DDEP_BUILD_BLOSC=OFF && \
+    -DDEP_BUILD_BLOSC=OFF \
+    -DDEP_BUILD_BOOST=OFF \
+    -DDEP_BUILD_FREETYPE=OFF \
+    -DDEP_BUILD_GLFW=OFF \
+    -DDEP_BUILD_JPEG=OFF \
+    -DDEP_BUILD_OPENSSL=OFF \
+    -DDEP_BUILD_PNG=OFF \
+    -DDEP_BUILD_TIFF=OFF \
+    -DDEP_BUILD_WXWIDGETS=OFF && \
   cmake --build /build/deps-build
 
 # Build and install BambuStudio
