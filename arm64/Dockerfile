@@ -15,6 +15,7 @@ RUN \
     build-essential \
     cmake \
     curl \
+    extra-cmake-modules \
     git \
     libbz2-dev \
     libcurl4-openssl-dev \
