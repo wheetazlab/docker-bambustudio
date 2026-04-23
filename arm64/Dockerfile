@@ -76,9 +76,9 @@ RUN git clone --depth 1 --branch ${BAMBUSTUDIO_VERSION} \
 WORKDIR /build/BambuStudio
 RUN \
   cp /patches/TBB/GNU.cmake deps/TBB/GNU.cmake && \
-  git am /patches/0001-ENH-Allow-using-system-Blosc.patch && \
-  git am /patches/gmp-fixes.patch && \
-  git am /patches/0001-Apply-TBB-LTO-patch.patch
+  git apply /patches/0001-ENH-Allow-using-system-Blosc.patch && \
+  git apply /patches/gmp-fixes.patch && \
+  git apply /patches/0001-Apply-TBB-LTO-patch.patch
 
 # Build BambuStudio bundled dependencies
 RUN \
