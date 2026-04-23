@@ -152,8 +152,8 @@ RUN \
     libsecret-1-0 \
     libwebkit2gtk-4.1-0 \
     libwx-perl \
-    libwxgtk-webview3.2-0 \
-    libwxgtk3.2-0 && \
+    libwxgtk-webview3.2-1t64 \
+    libwxgtk3.2-1t64 && \
   printf "arm64 version: ${VERSION}\nBuild-date: ${BUILD_DATE}" > /build_version && \
   echo "**** cleanup ****" && \
   apt-get autoclean && \
