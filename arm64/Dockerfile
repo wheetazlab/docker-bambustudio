@@ -76,7 +76,8 @@ WORKDIR /build/BambuStudio
 RUN \
   cp /patches/TBB/GNU.cmake deps/TBB/GNU.cmake && \
   git apply /patches/0001-ENH-Allow-using-system-Blosc.patch && \
-  git apply /patches/0001-Apply-TBB-LTO-patch.patch
+  git apply /patches/0001-Apply-TBB-LTO-patch.patch && \
+  git apply /patches/fix-cgal-directory-flag.patch
 
 # Build BambuStudio bundled dependencies
 # Build dir is INSIDE the source tree so that git apply --directory paths

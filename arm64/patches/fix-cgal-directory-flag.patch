@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000001 Mon Sep 17 00:00:00 2001
+From: arm64-build-fix <arm64-build-fix@local>
+Date: Thu, 01 Jan 2026 00:00:00 +0000
+Subject: [PATCH] fix: remove CGAL_DIRECTORY_FLAG; patch already has full paths
+
+The CGAL 0001-clang19.patch uses paths relative to the BambuStudio git
+root (e.g. deps-build/dep_CGAL-prefix/src/dep_CGAL/boost/...). Adding
+--directory <that-same-path> via CGAL_DIRECTORY_FLAG doubles the prefix
+and git apply fails. Drop the flag; when deps-build is inside the git
+tree (IN_GIT_REPO=ON) the full paths resolve correctly without it.
+---
+ deps/CGAL/CGAL.cmake | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/deps/CGAL/CGAL.cmake b/deps/CGAL/CGAL.cmake
+index bafe3fb..0000001 100644
+--- a/deps/CGAL/CGAL.cmake
++++ b/deps/CGAL/CGAL.cmake
+@@ -1,7 +1,3 @@
+-if (IN_GIT_REPO)
+-    set(CGAL_DIRECTORY_FLAG --directory ${BINARY_DIR_REL}/dep_CGAL-prefix/src/dep_CGAL)
+-endif ()
+-
+ bambustudio_add_cmake_project(
+     CGAL
+     URL      https://github.com/CGAL/cgal/archive/refs/tags/v5.4.zip
