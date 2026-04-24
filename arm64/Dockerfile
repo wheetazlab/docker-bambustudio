@@ -141,8 +141,6 @@ RUN \
     gstreamer1.0-nice \
     gstreamer1.0-plugins-* \
     gstreamer1.0-pulseaudio \
-    libavcodec61 \
-    libavutil59 \
     libblosc1 \
     libcurl4 \
     libglfw3 \
@@ -150,7 +148,6 @@ RUN \
     libnotify4 \
     libosmesa6 \
     libsecret-1-0 \
-    libswscale8 \
     libwebkit2gtk-4.1-0 \
     libwx-perl \
     libwxgtk-webview3.2-1t64 \
@@ -166,6 +163,11 @@ RUN \
     /tmp/*
 
 COPY --from=builder /opt/bambustudio /opt/bambustudio
+# Copy FFmpeg 7 shared libs built in the deps stage (not available as arm64 packages)
+COPY --from=builder /build/deps-install/usr/local/lib/libavcodec.so* /usr/local/lib/
+COPY --from=builder /build/deps-install/usr/local/lib/libavutil.so* /usr/local/lib/
+COPY --from=builder /build/deps-install/usr/local/lib/libswscale.so* /usr/local/lib/
+RUN ldconfig
 
 # add local files
 COPY root/ /
