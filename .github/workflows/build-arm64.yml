@@ -22,42 +22,44 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          driver-opts: |
-            env.BUILDKIT_STEP_LOG_MAX_SIZE=536870912
-            env.BUILDKIT_STEP_LOG_MAX_SPEED=10485760
+      - name: Compute tags
+        id: tags
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+          SHA_TAG="${IMAGE}:sha-$(echo '${{ github.sha }}' | cut -c1-7)"
+          BRANCH_TAG="${IMAGE}:${{ github.ref_name }}"
+          LATEST_TAG="${IMAGE}:latest"
+          # Collect all tags as newline-separated for podman --tag args
+          TAGS="${SHA_TAG} ${BRANCH_TAG} ${LATEST_TAG}"
+          echo "tags=${TAGS}" >> "$GITHUB_OUTPUT"
+          echo "primary=${IMAGE}:latest" >> "$GITHUB_OUTPUT"
 
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | podman login ${{ env.REGISTRY }} \
+            --username ${{ github.actor }} \
+            --password-stdin
 
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=sha,prefix=sha-
+      - name: Build image
+        run: |
+          BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          TAG_ARGS=""
+          for tag in ${{ steps.tags.outputs.tags }}; do
+            TAG_ARGS="$TAG_ARGS --tag $tag"
+          done
+          podman build \
+            --file arm64/Dockerfile \
+            --format docker \
+            $TAG_ARGS \
+            --label "org.opencontainers.image.created=${BUILD_DATE}" \
+            --label "org.opencontainers.image.revision=${{ github.sha }}" \
+            --label "org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}" \
+            --build-arg BUILD_DATE="${BUILD_DATE}" \
+            --build-arg VERSION="${{ github.ref_name }}" \
+            arm64/
 
-      - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          context: arm64/
-          platforms: linux/arm64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
-            VERSION=${{ steps.meta.outputs.version }}
+      - name: Push image
+        run: |
+          for tag in ${{ steps.tags.outputs.tags }}; do
+            podman push "$tag"
+          done
