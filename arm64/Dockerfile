@@ -167,7 +167,8 @@ COPY --from=builder /opt/bambustudio /opt/bambustudio
 COPY --from=builder /build/deps-install/usr/local/lib/libavcodec.so* /usr/local/lib/
 COPY --from=builder /build/deps-install/usr/local/lib/libavutil.so* /usr/local/lib/
 COPY --from=builder /build/deps-install/usr/local/lib/libswscale.so* /usr/local/lib/
-RUN ldconfig
+RUN ldconfig && \
+    ln -sf /opt/bambustudio/share/applications/BambuStudio.desktop /usr/share/applications/BambuStudio.desktop
 
 # add local files
 COPY root/ /
